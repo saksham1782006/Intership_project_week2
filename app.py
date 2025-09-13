@@ -1,13 +1,21 @@
 import streamlit as st
 import pandas as pd
 import joblib
+from huggingface_hub import hf_hub_download
 
 # -----------------------------
-# Load model, scaler, and features
+# Load model from Hugging Face Hub
 # -----------------------------
-model = joblib.load("rf_model.pkl")
-scaler = joblib.load("scaler.pkl")
-feature_list = joblib.load("feature_columns.pkl")
+repo_id = "saksham1122211/Intership_project_model"
+
+model_path = hf_hub_download(repo_id=repo_id, filename="rf_model.pkl")
+model = joblib.load(model_path)
+
+# -----------------------------
+# Load local scaler & feature list
+# -----------------------------
+scaler = joblib.load("scaler.pkl")              # keep this file in repo
+feature_list = joblib.load("feature_columns.pkl")  # keep this file in repo
 
 if not isinstance(feature_list, list):
     feature_list = list(feature_list)
@@ -18,7 +26,6 @@ if not isinstance(feature_list, list):
 st.title("🏢 Building Energy Prediction App")
 st.write("Enter building details below to predict **Site EUI**")
 
-# Example Inputs (add as per your dataset)
 state = st.selectbox("Select State Factor", [1, 2, 3, 4, 5, 6, 7, 8])
 building_class = st.selectbox("Building Class", ["Residential", "Commercial"])
 facility_type = st.selectbox("Facility Type", [
@@ -60,3 +67,4 @@ if st.button("Predict Site EUI"):
     prediction = model.predict(input_scaled)[0]
 
     st.success(f"✅ Predicted Site EUI: {prediction:.2f}")
+
