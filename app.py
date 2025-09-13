@@ -3,19 +3,25 @@ import pandas as pd
 import joblib
 from huggingface_hub import hf_hub_download
 
-# -----------------------------
-# Load model from Hugging Face Hub
-# -----------------------------
-repo_id = "saksham1122211/Intership_project_model"
 
-model_path = hf_hub_download(repo_id=repo_id, filename="rf_model.pkl")
-model = joblib.load(model_path)
+import requests
 
-# -----------------------------
-# Load local scaler & feature list
-# -----------------------------
-scaler = joblib.load("scaler.pkl")              # keep this file in repo
-feature_list = joblib.load("feature_columns.pkl")  # keep this file in repo
+# Hugging Face repo details
+model_url = "https://huggingface.co/saksham1122211/Intership_project_model/resolve/main/rf_model.pkl"
+model_path = "rf_model.pkl"
+
+# Download the model if not present locally
+import os
+if not os.path.exists(model_path):
+    print("Downloading model from Hugging Face...")
+    r = requests.get(model_url)
+    with open(model_path, "wb") as f:
+        f.write(r.content)
+
+model= joblib.load(model_path)
+
+feature_list = joblib.load("feature_columns.pkl")
+scaler=joblib.load("scaler.pkl")  # keep this file in repo
 
 if not isinstance(feature_list, list):
     feature_list = list(feature_list)
