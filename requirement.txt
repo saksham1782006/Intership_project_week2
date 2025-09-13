@@ -2,5 +2,5 @@ streamlit
 pandas
 scikit-learn
 joblib
-numpy
-hugging face
+huggingface_hub
+requests
